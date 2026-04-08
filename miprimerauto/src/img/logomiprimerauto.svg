@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" preserveAspectRatio="xMinYMid meet">
+  <g transform="translate(2, 4) scale(0.45)">
+    <path d="M5,5 L112,5 L112,95 Q112,105 58,120 Q5,105 5,95 Z" fill="#c29243"/>
+    <path d="M8,8 L109,8 L109,92 Q109,102 58,116 Q8,102 8,92 Z" fill="#1a2e4c"/>
+    <path d="M15,45 Q25,15 65,20 Q105,25 110,55 L110,75 Q60,80 15,70 Z" fill="#ffffff"/>
+    <circle cx="40" cy="65" r="11" fill="#1a2e4c" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="85" cy="68" r="10" fill="#1a2e4c" stroke="#ffffff" stroke-width="2"/>
+  </g>
+
+  <text x="60" y="32" font-family="Arial Black, sans-serif" font-weight="900" font-size="19" fill="#1a2e4c" letter-spacing="-0.8">
+    MI PRIMER
+  </text>
+  
+  <text x="60" y="50" font-family="Arial, sans-serif" font-weight="bold" font-size="13" fill="#c29243" letter-spacing="3.5">
+    AUTO GT
+  </text>
+</svg>
