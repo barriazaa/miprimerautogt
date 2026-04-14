@@ -1,39 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Primer Auto GT</title>
-    <link rel="stylesheet" href="miprimerauto/build/css/app.css">
-</head>
-<body>
-    <header class="header inicio">
-        <div class="contenedor contenido-header">
-            <div class="barra">
-                <a href="/">
-                    <img src="miprimerauto/build/img/logomiprimerauto.svg" alt="Logotipo de Mi Primer Auto GT">
-                </a>
+<?php 
 
-                <div class="mobile-menu">
-                    <img src="miprimerauto/build/img/barras.svg" alt="icono menu responsive">
-                </div>
+    require 'miprimerauto/includes/funciones.php';
 
-                <div class="derecha">
-                    <img class="dark-mode-boton" src="miprimerauto/build/img/dark-mode.svg">
-                        <nav class="navegacion mostrar">
-                            <a href="nosotros.html">Nosotros</a>
-                            <a href="anuncios.html">Anuncios</a>
-                            <a href="blog.html">Blog</a>
-                            <a href="contacto.html">Contacto</a>
-                        </nav>
-
-                </div>
-
-                
-            </div> <!-- .barra -->
-            <h1>Venta de autos rodados</h1>
-        </div>
-    </header>
+    incluirTemplate('header', $inicio = true);
+?>
 
     <main class="contenedor seccion">
         <h1>Mas sobre nosotros</h1>
@@ -98,7 +68,7 @@
                         </li>
                     </ul>
 
-                    <a href="anuncios.html" class="boton boton-amarillo-block">
+                    <a href="anuncios.php" class="boton boton-amarillo-block">
                         Ver auto
                     </a>
                 </div><!-- .contenido-anuncio  -->
@@ -132,7 +102,7 @@
                         </li>
                     </ul>
 
-                    <a href="anuncios.html" class="boton boton-amarillo-block">
+                    <a href="anuncios.php" class="boton boton-amarillo-block">
                         Ver auto
                     </a>
                 </div><!-- .contenido-anuncio  -->
@@ -166,7 +136,7 @@
                         </li>
                     </ul>
 
-                    <a href="anuncios.html" class="boton boton-amarillo-block">
+                    <a href="anuncios.php" class="boton boton-amarillo-block">
                         Ver auto
                     </a>
                 </div><!-- .contenido-anuncio  -->
@@ -174,14 +144,14 @@
         </div><!-- .contenedor-anuncios -->
 
         <div class="alinear-derecha">
-            <a href="anuncios.html" class="boton boton-verde">Ver todos</a>
+            <a href="anuncios.php" class="boton boton-verde">Ver todos</a>
         </div>
     </section>
 
 <section class="imagen-contacto">
     <h2>Encuentra tu primer auto</h2>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-    <a href="contacto.html" class="boton boton-amarillo">Contactanos</a>
+    <a href="contacto.php" class="boton boton-amarillo">Contactanos</a>
 </section>
 
 <div class="contenedor seccion seccion-inferior">
@@ -198,7 +168,7 @@
             </div>
 
             <div class="texto-entrada">
-                <a href="entrada.html">
+                <a href="entrada.php">
                     <h4>Proximo ingreso</h4>
                     <p class="informacion-meta">Escrito el: <span>06/04/2026</span>por: <span>Admin</span> </p>
 
@@ -224,7 +194,7 @@
             </div>
 
             <div class="texto-entrada">
-                <a href="entrada.html">
+                <a href="entrada.php">
                     <h4>Proximo ingreso</h4>
                     <p class="informacion-meta">Escrito el: <span>06/04/2026</span>por: <span>Admin</span> </p>
 
@@ -255,18 +225,6 @@
     </section>
 </div>
 
-    <footer class="footer seccion">
-        <div class="contenedor contenedor-footer">
-                    <nav class="navegacion">
-                        <a href="nosotros.html">Nosotros</a>
-                        <a href="anuncios.html">Anuncios</a>
-                        <a href="blog.html">Blog</a>
-                        <a href="contacto.html">Contacto</a>
-                </nav>
-        </div>
-
-        <p class="copyright">Todos los derechos reservados 2026 &copy;</p>
-    </footer>
-    <script src="miprimerauto/build/js/bundle.min.js"></script>
-</body>
-</html>
+<?php 
+    incluirTemplate('footer');
+?>
