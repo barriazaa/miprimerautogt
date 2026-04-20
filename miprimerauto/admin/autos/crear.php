@@ -1,8 +1,11 @@
 <?php 
 //Base de datos
-
 require '../../includes/config/database.php';
  $db = conectarDB();
+
+ //Consultar para obtener los vendedores
+ $consulta = "SELECT * FROM vendedores";
+ $resultado = mysqli_query($db, $consulta);
 
  //Arreglo con mensajes de errores
 $errores = [];
@@ -18,9 +21,9 @@ $errores = [];
 
 //Ejecuta el codigo despues de que el usuario envia el formulario
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    //echo "<pre>";
-    //var_dump($_POST);
-    //echo "</pre>";
+    echo "<pre>";
+    var_dump($_POST);
+    echo "</pre>";
 
     $auto = $_POST['auto'];
     $precio = $_POST['precio'];
@@ -76,7 +79,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $resultado = mysqli_query($db, $query);
 
         if($resultado){
-            echo "Auto creado correctamente";
+            //Redireccionar al usuario
+
+            header('Location: /miprimerauto/admin');
         }
     }
 
@@ -143,8 +148,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 <select name="vendedores_vendedor_id">
                     <option value="">--Seleccione--</option>
-                    <option value="1">Bryan</option>
-                    <option value="2">Basualdo</option>
+                    <?php while($vendedor = mysqli_fetch_assoc($resultado) ): ?>
+                        <option  <?php echo $vendedores_vendedor_id === $vendedor['vendedor_id'] ? 'selected' : ''; ?>  value="<?php echo $vendedor['vendedor_id']; ?>"> <?php echo $vendedor['nombre'] . " " . $vendedor['apellido']; ?> </option>
+
+                    <?php endwhile; ?>
                 </select>
             </fieldset>
 
