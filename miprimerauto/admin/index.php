@@ -1,7 +1,22 @@
 <?php 
 
+    //Importamos la conexion
+    require '../includes/config/database.php';
+    $db = conectarDB();
+
+    
+    //Escribir el Query
+    $query = "SELECT * FROM autos";
+
+
+    //Consultar la BD
+    $resultadoConsulta = mysqli_query($db, $query);
+
+
+    //Muestra mensaje condicional
     $registrado = $_GET['registrado'] ?? null;
 
+    //Incluye un template
     require '../includes/funciones.php';
     incluirTemplate('header');
 ?>
@@ -30,25 +45,31 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody>  <!--. Mostrar los resultados .-->
+                <?php while($auto = mysqli_fetch_assoc($resultadoConsulta)): ?>
                 <tr>
-                    <td>1</td>
-                    <td>Mistubishi L200</td>
-                    <td>120000</td>
-                    <td><img src="../../imagenes/bfeee553282d63644762efbf84b2a3c5.jpg" class="imagen-tabla"></td>
-                    <td>4</td>
-                    <td>4</td>
-                    <td>2.8</td>
-                    <td>2026-04-12</td>
+                    <td><?php echo $auto['auto_id']; ?></td>
+                    <td><?php echo $auto['auto']; ?></td>
+                    <td><?php echo $auto['precio']; ?></td>
+                    <td><img src="../../imagenes/<?php echo $auto['imagen']; ?>" class="imagen-tabla"></td>
+                    <td><?php echo $auto['puertas']; ?></td>
+                    <td><?php echo $auto['cilindros']; ?></td>
+                    <td><?php echo $auto['litros']; ?></td>
+                    <td><?php echo $auto['ingresado']; ?></td>
                     <td>
                         <a href="#" class="boton boton-rojo-block">Eliminar</a>
                         <a href="#" class="boton boton-amarillo-block">Actualizar</a>
                     </td>
                 </tr>
+                <?php endwhile; ?>
             </tbody>
         </table> 
     </main>
 
 <?php 
+
+        //Cerrar la conexion
+        mysqli_close($db);
+
     incluirTemplate('footer');
 ?>
