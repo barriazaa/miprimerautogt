@@ -7,10 +7,18 @@
         header('Location: ../admin');
     }
 
-
 //Base de datos
 require '../../includes/config/database.php';
  $db = conectarDB();
+
+ //Obtener datos del auto.
+ $consulta = "SELECT * FROM autos WHERE auto_id = {$auto_id}";
+ $resultado = mysqli_query($db, $consulta);
+ $autos = mysqli_fetch_assoc($resultado);
+ 
+ echo"<pre>";
+ var_dump($autos);
+ echo"</pre>";
 
  //Consultar para obtener los vendedores
  $consulta = "SELECT * FROM vendedores";
@@ -19,14 +27,15 @@ require '../../includes/config/database.php';
  //Arreglo con mensajes de errores
 $errores = [];
 
-    $auto = '';
-    $precio = '';
-    $descripcion = '';
-    $puertas = '';
-    $cilindros = '';
-    $litros = '';
-    $ingresado = '';
-    $vendedores_vendedor_id = '';
+    $auto = $autos['auto'];
+    $precio = $autos['precio'];
+    $descripcion = $autos['descripcion'];
+    $puertas = $autos['puertas'];
+    $cilindros = $autos['cilindros'];
+    $litros = $autos['litros'];
+    $ingresado = $autos['ingresado'];
+    $vendedores_vendedor_id = $autos['vendedores_vendedor_id'];
+    $imagen = $autos['imagen'];
 
 //Ejecuta el codigo despues de que el usuario envia el formulario
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -160,6 +169,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 <label for="imagen">Imagen:</label>
                 <input type="file" id= "imagen" accept="image/jpeg, image/png" name="imagen">
+
+                <img src="/imagenes/<?php echo $imagen; ?>" class="imagen-small" >
 
                 <label for="descripcion">Descripcion:</label>
                 <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
