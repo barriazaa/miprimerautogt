@@ -21,18 +21,23 @@ $errores = [];
 
 //Ejecuta el codigo despues de que el usuario envia el formulario
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    echo "<pre>";
-    var_dump($_POST);
-    echo "</pre>";
 
-    $auto = $_POST['auto'];
-    $precio = $_POST['precio'];
-    $descripcion = $_POST['descripcion'];
-    $puertas = $_POST['puertas'];
-    $cilindros = $_POST['cilindros'];
-    $litros = $_POST['litros'];
+    //echo "<pre>";
+    //var_dump($_POST);
+    //echo "</pre>";
+
+    $auto = mysqli_real_escape_string($db, $_POST['auto']);
+    $precio = mysqli_real_escape_string($db, $_POST['precio']);
+    $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
+    $puertas = mysqli_real_escape_string($db, $_POST['puertas']);
+    $cilindros = mysqli_real_escape_string($db, $_POST['cilindros']);
+    $litros = mysqli_real_escape_string($db, $_POST['litros']);
     $ingresado = $_POST['ingresado'];
-    $vendedores_vendedor_id = $_POST['vendedores_vendedor_id'];
+    $vendedores_vendedor_id = mysqli_real_escape_string($db, $_POST['vendedores_vendedor_id']);
+
+    //Asignar files hacia una variable
+    $imagen = $_FILES['imagen'];
+
 
     if(!$auto){
         $errores[] = "Debes añadir un auto";
@@ -58,6 +63,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if(!$vendedores_vendedor_id){
         $errores[] = "Debes seleccionar un vendedor";
     }
+    if(!$imagen['name'] || $imagen['error'] ){
+        $errores[] = "La imagen es obligatoria";
+    }
+
+    //Validar por tamaño
+    $medida = 1000 * 1000;
+    if($imagen['size'] > $medida){
+        $errores[] = "La imagen es muy pesada";
+    }
 
     //echo "<pre>";
     //var_dump($errores);
@@ -68,10 +82,30 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     if(empty($errores)){
 
+
+        //Subida de archivos
+
+        
+        //Crear Carpeta
+        $carpetaImagenes = '../../../imagenes/';
+
+        if(!is_dir($carpetaImagenes)){
+            mkdir($carpetaImagenes);
+        }
+
+        //Generar un nombre unico
+        $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
+
+        
+        //Subir Imagen
+        move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen );
+
+
+
         //Insertar en la base de datos
-        $query = "INSERT INTO autos (auto, precio, descripcion, puertas, cilindros, litros,
+        $query = "INSERT INTO autos (auto, precio, imagen, descripcion, puertas, cilindros, litros,
         ingresado, vendedores_vendedor_id) 
-        VALUES ('$auto', '$precio', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado',
+        VALUES ('$auto', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado',
         '$vendedores_vendedor_id')";
 
         //echo $query;
@@ -81,7 +115,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         if($resultado){
             //Redireccionar al usuario
 
-            header('Location: /miprimerauto/admin');
+            header('Location: /miprimerauto/admin?registrado=1');
         }
     }
 
@@ -105,7 +139,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         </div>
         <?php endforeach; ?>
 
-        <form class="formulario" method="POST" action="/miprimerauto/admin/autos/crear.php">
+        <form class="formulario" method="POST" action="/miprimerauto/admin/autos/crear.php" enctype ="multipart/form-data">
             <fieldset>
                 <legend>Informacion General</legend>
 
@@ -116,7 +150,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                 <input type="number" id= "precio" name="precio" placeholder="Precio del Auto" value="<?php echo $precio; ?>">
 
                 <label for="imagen">Imagen:</label>
-                <input type="file" id= "imagen" accept="image/jpeg, image/png">
+                <input type="file" id= "imagen" accept="image/jpeg, image/png" name="imagen">
 
                 <label for="descripcion">Descripcion:</label>
                 <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
