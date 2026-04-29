@@ -58,7 +58,7 @@
                     <td><?php echo $auto['ingresado']; ?></td>
                     <td>
                         <a href="#" class="boton boton-rojo-block">Eliminar</a>
-                        <a href="#" class="boton boton-amarillo-block">Actualizar</a>
+                        <a href="../../miprimerauto/admin/autos/actualizar.php?auto_id=<?php echo $auto['auto_id']; ?>" class="boton boton-amarillo-block">Actualizar</a>
                     </td>
                 </tr>
                 <?php endwhile; ?>
