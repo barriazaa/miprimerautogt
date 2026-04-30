@@ -25,6 +25,8 @@
         <h1>Administrador MiPrimerAuto</h1>
         <?php if(intval( $registrado ) === 1): ?>
                 <p class="alerta exito"> Anuncio creado correctamente</p>
+        <?php elseif(intval( $registrado ) === 2): ?>
+                <p class="alerta exito"> Anuncio actualizado correctamente</p>   
         <?php endif; ?>
 
         <a href="/miprimerauto/admin/autos/crear.php" class="boton boton-verde">Nuevo Auto</a>

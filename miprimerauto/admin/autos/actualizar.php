@@ -16,9 +16,9 @@ require '../../includes/config/database.php';
  $resultado = mysqli_query($db, $consulta);
  $autos = mysqli_fetch_assoc($resultado);
  
- echo"<pre>";
- var_dump($autos);
- echo"</pre>";
+ //echo"<pre>";
+ //var_dump($autos);
+ //echo"</pre>";
 
  //Consultar para obtener los vendedores
  $consulta = "SELECT * FROM vendedores";
@@ -43,6 +43,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     //echo "<pre>";
     //var_dump($_POST);
     //echo "</pre>";
+    //exit;
 
     $auto = mysqli_real_escape_string($db, $_POST['auto']);
     $precio = mysqli_real_escape_string($db, $_POST['precio']);
@@ -75,15 +76,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if(!$litros){
         $errores[] = "Debes añadir el número de litros";
     }
-    if(!$ingresado){
-        $errores[] = "Debes añadir la fecha de ingreso";
-    }
+    //if(!$ingresado){
+    //    //$errores[] = "Debes añadir la fecha de ingreso";
+    //}
     if(!$vendedores_vendedor_id){
         $errores[] = "Debes seleccionar un vendedor";
     }
-    if(!$imagen['name'] || $imagen['error'] ){
-        $errores[] = "La imagen es obligatoria";
-    }
+    //if(!$imagen['name'] || $imagen['error'] ){
+    //    $errores[] = "La imagen es obligatoria";
+    //}
+
 
     //Validar por tamaño
     $medida = 1000 * 1000;
@@ -95,45 +97,54 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     //var_dump($errores);
     //echo "</pre>";
  
-
     //Revisar que el arreglo de errores este vacio
 
     if(empty($errores)){
 
-
-        //Subida de archivos
-
-        
-        //Crear Carpeta
+            //Crear Carpeta
         $carpetaImagenes = '../../../imagenes/';
 
         if(!is_dir($carpetaImagenes)){
             mkdir($carpetaImagenes);
         }
+        $nombreImagen = '';
 
+        //Subida de archivos
+        if($imagen['name']){
+            //Eliminar la imagen previa
+            unlink($carpetaImagenes . $autos['imagen']);
+                    
         //Generar un nombre unico
         $nombreImagen = md5( uniqid( rand(), true ) ) . ".jpg";
-
-        
         //Subir Imagen
         move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen );
+        }else {
+            $nombreImagen = $autos['imagen'];
+        }
+            
 
+        //imagen = '{$nombreImagen}'
+        //ingresado = {$ingresado}
+        //Actualizar en la base de datos
+        $query = "UPDATE autos SET auto = '{$auto}', precio = {$precio}, imagen = '{$nombreImagen}', 
+        descripcion = '{$descripcion}', puertas = {$puertas}, cilindros = {$cilindros}, 
+        litros = {$litros}, vendedores_vendedor_id = {$vendedores_vendedor_id} 
+        WHERE auto_id = {$auto_id}";
 
-
-        //Insertar en la base de datos
-        $query = "INSERT INTO autos (auto, precio, imagen, descripcion, puertas, cilindros, litros,
-        ingresado, vendedores_vendedor_id) 
-        VALUES ('$auto', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado',
-        '$vendedores_vendedor_id')";
+        //$query = "INSERT INTO autos (auto, precio, imagen, descripcion, puertas, cilindros, litros,
+        //ingresado, vendedores_vendedor_id) 
+        //VALUES ('$auto', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado',
+        //'$vendedores_vendedor_id')";
 
         //echo $query;
+
 
         $resultado = mysqli_query($db, $query);
 
         if($resultado){
             //Redireccionar al usuario
 
-            header('Location: /miprimerauto/admin?registrado=1');
+            header('Location: /miprimerauto/admin?registrado=2');
         }
     }
 
@@ -157,7 +168,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         </div>
         <?php endforeach; ?>
 
-        <form class="formulario" method="POST" action="/miprimerauto/admin/autos/crear.php" enctype ="multipart/form-data">
+        <form class="formulario" method="POST" enctype ="multipart/form-data">
             <fieldset>
                 <legend>Informacion General</legend>
 

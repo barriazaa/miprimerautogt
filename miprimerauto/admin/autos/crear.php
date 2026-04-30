@@ -109,7 +109,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         '$vendedores_vendedor_id')";
 
         //echo $query;
-
+        //exit;
         $resultado = mysqli_query($db, $query);
 
         if($resultado){
