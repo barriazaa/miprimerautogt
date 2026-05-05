@@ -30,6 +30,10 @@
                 </div>
                 
             </div> <!-- .barra -->
-
+            <?php
+                if($inicio) {
+                    echo "<h1>Venta de autos</h1>";
+                }
+            ?>
         </div>
     </header>
