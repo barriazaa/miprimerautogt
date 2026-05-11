@@ -6,8 +6,8 @@
 
 
 //Crear un email y contraseña
-    $email = "correo@correo.com";
-    $password = "root";
+    $email = "email@email.com";
+    $password = "123456";
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 //Query para crear un nuevo usuario

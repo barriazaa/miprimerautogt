@@ -13,7 +13,7 @@
         //var_dump($_POST);
         //echo "</pre>";
 
-        $email = mysqli_real_escape_string ($db, filter_var($_POST['email'], FILTER_VALIDATE_EMAIL));
+        $email = mysqli_real_escape_string ($db, filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) );
         $password = mysqli_real_escape_string ($db, $_POST['password']);
 
         if(!$email) {
@@ -29,16 +29,25 @@
             $resultado = mysqli_query($db, $query);
 
 
-            if($resultado ->num_rows) {
+            if($resultado->num_rows) {
                 //Revisar si el password es correcto
                 $usuario = mysqli_fetch_assoc($resultado);
 
-
+                //var_dump($usuario['password']);
                 //Verificar si el password es correcto o no
                 $auth = password_verify($password, $usuario['password']);
 
+                //var_dump($auth);
                 if($auth) {
                     //El usuario esta autenticado
+                    session_start();
+
+                    //Llenar el arreglo de la sesion
+                    $_SESSION['usuario'] = $usuario['email'];
+                    $_SESSION['login'] = true;
+
+                    header('Location: /miprimerauto/admin');
+
 
                 } else {
                     $errores[] = "El password es incorrecto";

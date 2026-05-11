@@ -1,4 +1,9 @@
 <?php 
+    require '../includes/funciones.php';
+    $auth = estaAutenticado();
+        if(!$auth) {
+            header ('Location: /');
+        } 
 
 
     //Importamos la conexion
@@ -42,7 +47,6 @@
     }
 
     //Incluye un template
-    require '../includes/funciones.php';
     incluirTemplate('header');
 ?>
 

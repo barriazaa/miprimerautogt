@@ -1,4 +1,13 @@
 <?php 
+    require '../../includes/funciones.php';
+    $auth = estaAutenticado();
+        if(!$auth) {
+            header ('Location: /');
+        }
+
+
+
+
     //Validar la URL por id valido
     $auto_id = $_GET['auto_id'];
     $auto_id = filter_var($auto_id, FILTER_VALIDATE_INT);
@@ -153,7 +162,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
 
 
-    require '../../includes/funciones.php';
     incluirTemplate('header');
 ?>
 
