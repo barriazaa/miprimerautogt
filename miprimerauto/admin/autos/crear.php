@@ -10,14 +10,30 @@
 require '../../includes/config/database.php';
  $db = conectarDB();
 
- //Consultar para obtener los vendedores
- $consulta = "SELECT * FROM vendedores";
- $resultado = mysqli_query($db, $consulta);
+ //Consultar para obtener los catálogos
+ $resultadoVendedores = mysqli_query($db, "SELECT * FROM vendedores");
+ $resultadoModelos = mysqli_query($db, "SELECT m.id, m.nombre as modelo, ma.nombre as marca FROM modelos m INNER JOIN marcas ma ON m.marca_id = ma.id");
+ $resultadoTipos = mysqli_query($db, "SELECT * FROM tipos_vehiculo");
+ $resultadoCombustibles = mysqli_query($db, "SELECT * FROM combustibles");
+ $resultadoTransmisiones = mysqli_query($db, "SELECT * FROM transmisiones");
+ $resultadoTracciones = mysqli_query($db, "SELECT * FROM tracciones");
+ $resultadoColoresExt = mysqli_query($db, "SELECT * FROM colores");
+ $resultadoColoresInt = mysqli_query($db, "SELECT * FROM colores");
+ $resultadoEstados = mysqli_query($db, "SELECT * FROM estados_titulo");
 
  //Arreglo con mensajes de errores
 $errores = [];
 
-    $auto = '';
+    $modelo_id = '';
+    $tipo_vehiculo_id = '';
+    $combustible_id = '';
+    $transmision_id = '';
+    $traccion_id = '';
+    $color_exterior_id = '';
+    $color_interior_id = '';
+    $estado_titulo_id = '';
+    $año = '';
+    $millaje = '';
     $precio = '';
     $descripcion = '';
     $puertas = '';
@@ -33,7 +49,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     //var_dump($_POST);
     //echo "</pre>";
 
-    $auto = mysqli_real_escape_string($db, $_POST['auto']);
+    $modelo_id = mysqli_real_escape_string($db, $_POST['modelo_id']);
+    $tipo_vehiculo_id = mysqli_real_escape_string($db, $_POST['tipo_vehiculo_id']);
+    $combustible_id = mysqli_real_escape_string($db, $_POST['combustible_id']);
+    $transmision_id = mysqli_real_escape_string($db, $_POST['transmision_id']);
+    $traccion_id = mysqli_real_escape_string($db, $_POST['traccion_id']);
+    $color_exterior_id = mysqli_real_escape_string($db, $_POST['color_exterior_id']);
+    $color_interior_id = mysqli_real_escape_string($db, $_POST['color_interior_id']);
+    $estado_titulo_id = mysqli_real_escape_string($db, $_POST['estado_titulo_id']);
+    $año = mysqli_real_escape_string($db, $_POST['año']);
+    $millaje = mysqli_real_escape_string($db, $_POST['millaje']);
     $precio = mysqli_real_escape_string($db, $_POST['precio']);
     $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
     $puertas = mysqli_real_escape_string($db, $_POST['puertas']);
@@ -46,8 +71,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $imagen = $_FILES['imagen'];
 
 
-    if(!$auto){
-        $errores[] = "Debes añadir un auto";
+    if(!$modelo_id){
+        $errores[] = "Debes seleccionar un modelo";
+    }
+    if(!$año){
+        $errores[] = "Debes añadir el año";
     }
     if(!$precio){
         $errores[] = "Debes añadir un precio";
@@ -110,10 +138,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
 
         //Insertar en la base de datos
-        $query = "INSERT INTO autos (auto, precio, imagen, descripcion, puertas, cilindros, litros,
-        ingresado, vendedores_vendedor_id) 
-        VALUES ('$auto', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado',
-        '$vendedores_vendedor_id')";
+        $query = "INSERT INTO autos (modelo_id, tipo_vehiculo_id, combustible_id, transmision_id, traccion_id, color_exterior_id, color_interior_id, estado_titulo_id, año, millaje, precio, imagen, descripcion, puertas, cilindros, litros, ingresado, vendedores_vendedor_id) 
+        VALUES ('$modelo_id', '$tipo_vehiculo_id', '$combustible_id', '$transmision_id', '$traccion_id', '$color_exterior_id', '$color_interior_id', '$estado_titulo_id', '$año', '$millaje', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado', '$vendedores_vendedor_id')";
 
         //echo $query;
         //exit;
@@ -149,8 +175,19 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             <fieldset>
                 <legend>Informacion General</legend>
 
-                <label for="auto">Auto:</label>
-                <input type="text" id= "auto" name="auto" placeholder="Auto tipo" value="<?php echo $auto; ?>">
+                <label for="modelo_id">Modelo:</label>
+                <select name="modelo_id" id="modelo_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoModelos)): ?>
+                        <option <?php echo $modelo_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['marca'] . " - " . $row['modelo']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="año">Año:</label>
+                <input type="number" id="año" name="año" placeholder="Ej: 2020" min="1900" max="<?php echo date('Y') + 1; ?>" value="<?php echo $año; ?>">
+
+                <label for="millaje">Millaje:</label>
+                <input type="number" id="millaje" name="millaje" placeholder="Ej: 50000" min="0" value="<?php echo $millaje; ?>">
 
                 <label for="precio">Precio:</label>
                 <input type="number" id= "precio" name="precio" placeholder="Precio del Auto" value="<?php echo $precio; ?>">
@@ -160,6 +197,66 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 <label for="descripcion">Descripcion:</label>
                 <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
+            </fieldset>
+
+            <fieldset>
+                <legend>Especificaciones Técnicas y Visuales</legend>
+
+                <label for="tipo_vehiculo_id">Tipo de Vehículo:</label>
+                <select name="tipo_vehiculo_id" id="tipo_vehiculo_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoTipos)): ?>
+                        <option <?php echo $tipo_vehiculo_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="combustible_id">Combustible:</label>
+                <select name="combustible_id" id="combustible_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoCombustibles)): ?>
+                        <option <?php echo $combustible_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="transmision_id">Transmisión:</label>
+                <select name="transmision_id" id="transmision_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoTransmisiones)): ?>
+                        <option <?php echo $transmision_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="traccion_id">Tracción:</label>
+                <select name="traccion_id" id="traccion_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoTracciones)): ?>
+                        <option <?php echo $traccion_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="color_exterior_id">Color Exterior:</label>
+                <select name="color_exterior_id" id="color_exterior_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoColoresExt)): ?>
+                        <option <?php echo $color_exterior_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="color_interior_id">Color Interior:</label>
+                <select name="color_interior_id" id="color_interior_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoColoresInt)): ?>
+                        <option <?php echo $color_interior_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+
+                <label for="estado_titulo_id">Estado del Título:</label>
+                <select name="estado_titulo_id" id="estado_titulo_id">
+                    <option value="">--Seleccione--</option>
+                    <?php while($row = mysqli_fetch_assoc($resultadoEstados)): ?>
+                        <option <?php echo $estado_titulo_id === $row['id'] ? 'selected' : ''; ?> value="<?php echo $row['id']; ?>"><?php echo $row['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
             </fieldset>
 
             <fieldset>
@@ -188,7 +285,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 <select name="vendedores_vendedor_id">
                     <option value="">--Seleccione--</option>
-                    <?php while($vendedor = mysqli_fetch_assoc($resultado) ): ?>
+                    <?php while($vendedor = mysqli_fetch_assoc($resultadoVendedores) ): ?>
                         <option  <?php echo $vendedores_vendedor_id === $vendedor['vendedor_id'] ? 'selected' : ''; ?>  value="<?php echo $vendedor['vendedor_id']; ?>"> <?php echo $vendedor['nombre'] . " " . $vendedor['apellido']; ?> </option>
 
                     <?php endwhile; ?>

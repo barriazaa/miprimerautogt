@@ -4,7 +4,7 @@
     $db = conectarDB();
 
     //consultar
-    $query = "SELECT * FROM autos LIMIT {$limite}";
+    $query = "SELECT a.*, m.nombre as modelo, ma.nombre as marca FROM autos a LEFT JOIN modelos m ON a.modelo_id = m.id LEFT JOIN marcas ma ON m.marca_id = ma.id LIMIT {$limite}";
 
     //obtener resultados
     $resultado = mysqli_query($db, $query);
@@ -19,9 +19,9 @@
                 
 
                 <div class="contenido-anuncio">
-                    <h3><?php echo $autos['auto']; ?></h3>
+                    <h3><?php echo $autos['marca'] . " " . $autos['modelo'] . " (" . $autos['año'] . ")"; ?></h3>
                     <p><?php echo $autos['descripcion']; ?></p>
-                    <p class="precio"><?php echo $autos['precio']; ?></p>
+                    <p class="precio" style="color: #71b100; font-weight: 700;">Precio: Q <?php echo number_format($autos['precio'], 2); ?></p>
 
                     <ul class="iconos-caracteristicas">
                         <li>

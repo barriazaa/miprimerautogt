@@ -3,7 +3,7 @@
     $auth = estaAutenticado();
         if(!$auth) {
             header ('Location: /');
-        } 
+        }
 
 
     //Importamos la conexion
@@ -12,7 +12,7 @@
 
     
     //Escribir el Query
-    $query = "SELECT * FROM autos";
+    $query = "SELECT a.*, m.nombre as modelo, ma.nombre as marca FROM autos a LEFT JOIN modelos m ON a.modelo_id = m.id LEFT JOIN marcas ma ON m.marca_id = ma.id";
 
 
     //Consultar la BD
@@ -68,7 +68,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Auto</th>
+                    <th>Vehículo</th>
                     <th>Precio</th>
                     <th>Imagen</th>
                     <th>puertas</th>
@@ -83,8 +83,8 @@
                 <?php while($auto = mysqli_fetch_assoc($resultadoConsulta)): ?>
                 <tr>
                     <td><?php echo $auto['auto_id']; ?></td>
-                    <td><?php echo $auto['auto']; ?></td>
-                    <td><?php echo $auto['precio']; ?></td>
+                    <td><?php echo $auto['marca'] . " " . $auto['modelo'] . " (" . $auto['año'] . ")"; ?></td>
+                    <td>Q <?php echo number_format($auto['precio'], 2); ?></td>
                     <td><img src="../../imagenes/<?php echo $auto['imagen']; ?>" class="imagen-tabla"></td>
                     <td><?php echo $auto['puertas']; ?></td>
                     <td><?php echo $auto['cilindros']; ?></td>
