@@ -54,24 +54,40 @@
                 .grid-especificaciones span {
                     display: block; color: #111827; font-size: 1.8rem; font-weight: bold; margin-top: 0.5rem;
                 }
+                @media (min-width: 992px) { /* Se aplica solo en pantallas grandes */
+                    .detalles-layout {
+                        display: grid;
+                        grid-template-columns: 1fr 1.2fr; /* Columnas: especificaciones y descripción */
+                        gap: 4rem; /* Espacio entre las columnas */
+                        align-items: start; /* Alinea las cajas arriba */
+                    }
+                    .detalles-layout > div {
+                        margin: 0 !important; /* Quita los márgenes verticales para que el grid los controle */
+                    }
+                }
             </style>
-            <div class="especificaciones" style="background-color: #f8f9fa; padding: 3rem; border-radius: 1rem; margin: 3rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <h3 style="text-align: center; color: #333; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 2rem;">Especificaciones</h3>
-                <ul class="grid-especificaciones">
-                    <li><strong>Tipo</strong><span><?php echo $auto['tipo_vehiculo']; ?></span></li>
-                    <li><strong>Combustible</strong><span><?php echo $auto['combustible']; ?></span></li>
-                    <li><strong>Transmisión</strong><span><?php echo $auto['transmision']; ?></span></li>
-                    <li><strong>Tracción</strong><span><?php echo $auto['traccion']; ?></span></li>
-                    <li><strong>Motor</strong><span><?php echo $auto['cilindros']; ?> Cil / <?php echo $auto['litros']; ?> L</span></li>
-                    <li><strong>Millaje</strong><span><?php echo number_format($auto['millaje']); ?> mi</span></li>
-                    <li><strong>Puertas</strong><span><?php echo $auto['puertas']; ?></span></li>
-                    <li><strong>Color Ext.</strong><span><?php echo $auto['color_exterior']; ?></span></li>
-                    <li><strong>Color Int.</strong><span><?php echo $auto['color_interior']; ?></span></li>
-                    <li><strong>Título</strong><span><?php echo $auto['estado_titulo']; ?></span></li>
-                </ul>
+            <div class="detalles-layout">
+                <div class="especificaciones" style="background-color: #f8f9fa; padding: 3rem; border-radius: 1rem; margin: 3rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <h3 style="text-align: center; color: #333; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 2rem;">Especificaciones</h3>
+                    <ul class="grid-especificaciones">
+                        <li><strong>Tipo</strong><span><?php echo $auto['tipo_vehiculo']; ?></span></li>
+                        <li><strong>Combustible</strong><span><?php echo $auto['combustible']; ?></span></li>
+                        <li><strong>Transmisión</strong><span><?php echo $auto['transmision']; ?></span></li>
+                        <li><strong>Tracción</strong><span><?php echo $auto['traccion']; ?></span></li>
+                        <li><strong>Motor</strong><span><?php echo $auto['cilindros']; ?> Cil / <?php echo $auto['litros']; ?> L</span></li>
+                        <li><strong>Millaje</strong><span><?php echo number_format($auto['millaje']); ?> mi</span></li>
+                        <li><strong>Puertas</strong><span><?php echo $auto['puertas']; ?></span></li>
+                        <li><strong>Color Ext.</strong><span><?php echo $auto['color_exterior']; ?></span></li>
+                        <li><strong>Color Int.</strong><span><?php echo $auto['color_interior']; ?></span></li>
+                        <li><strong>Título</strong><span><?php echo $auto['estado_titulo']; ?></span></li>
+                    </ul>
+                </div>
+    
+                <div class="descripcion-auto" style="background-color: #f8f9fa; padding: 3rem; border-radius: 1rem; margin-bottom: 3rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <h3 style="text-align: center; color: #333; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 2rem;">Descripción del Vehículo</h3>
+                    <p style="line-height: 1.8; color: #4b5563; font-size: 1.6rem; text-align: justify; margin: 0;"><?php echo nl2br($auto['descripcion']); ?></p>
+                </div>
             </div>
-
-            <?php echo $auto['descripcion']; ?>
         </div>
     </main>
 
