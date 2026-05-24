@@ -30,12 +30,12 @@
                 <div class="derecha">
                     <img class="dark-mode-boton" src="/miprimerauto/build/img/dark-mode.svg">
                         <nav class="navegacion mostrar">
-                            <a href="nosotros.php">Nosotros</a>
-                            <a href="anuncios.php">Anuncios</a>
-                            <a href="blog.php">Blog</a>
-                            <a href="contacto.php">Contacto</a>
+                            <a href="/nosotros.php">Nosotros</a>
+                            <a href="/anuncios.php">Anuncios</a>
+                            <a href="/blog.php">Blog</a>
+                            <a href="/contacto.php">Contacto</a>
                             <?php if($auth): ?>
-                                <a href="cerrar-sesion.php">Cerrar Sesion</a>
+                                <a href="/cerrar-sesion.php">Cerrar Sesion</a>
                             <?php endif; ?>
                         </nav>
 

@@ -141,14 +141,31 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $query = "INSERT INTO autos (modelo_id, tipo_vehiculo_id, combustible_id, transmision_id, traccion_id, color_exterior_id, color_interior_id, estado_titulo_id, año, millaje, precio, imagen, descripcion, puertas, cilindros, litros, ingresado, vendedores_vendedor_id) 
         VALUES ('$modelo_id', '$tipo_vehiculo_id', '$combustible_id', '$transmision_id', '$traccion_id', '$color_exterior_id', '$color_interior_id', '$estado_titulo_id', '$año', '$millaje', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado', '$vendedores_vendedor_id')";
 
-        //echo $query;
-        //exit;
-        $resultado = mysqli_query($db, $query);
+        // 1. Iniciar la transacción
+        mysqli_begin_transaction($db);
 
-        if($resultado){
-            //Redireccionar al usuario
+        try {
+            // 2. Insertar el vehículo
+            $resultado = mysqli_query($db, $query);
+            
+            if(!$resultado) {
+                throw new Exception("Error al insertar el vehículo en la base de datos.");
+            }
 
+            // 3. Obtener el ID que se le acaba de asignar al nuevo vehículo
+            $nuevoAutoId = mysqli_insert_id($db);
+
+            // 4. Registrar en la bitácora
+            $queryLog = "INSERT INTO bitacoras (accion, auto_id, fecha) VALUES ('Creado', {$nuevoAutoId}, NOW())";
+            mysqli_query($db, $queryLog);
+
+            // 5. Todo salió bien, guardamos definitivamente (Commit)
+            mysqli_commit($db);
             header('Location: /miprimerauto/admin?registrado=1');
+        } catch (Exception $e) {
+            // Si algo falló, deshacemos todo (Rollback)
+            mysqli_rollback($db);
+            $errores[] = "Hubo un error en la transacción: " . $e->getMessage();
         }
     }
 

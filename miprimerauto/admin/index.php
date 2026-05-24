@@ -74,20 +74,34 @@
         $auto_id = filter_var($auto_id, FILTER_VALIDATE_INT);
 
         if($auto_id){
-        //Eliminar archivo
+            //Obtener el nombre del archivo de imagen antes de borrar el registro
             $query = "SELECT imagen FROM autos WHERE auto_id = {$auto_id}";
             $resultado = mysqli_query($db, $query);
             $auto = mysqli_fetch_assoc($resultado);
 
-            unlink('../../imagenes/' . $auto['imagen']);
+            // 1. Iniciar transacción
+            mysqli_begin_transaction($db);
 
-        //Eliminar el auto
-            $query = "DELETE FROM autos WHERE auto_id = {$auto_id}";
-            $resultado = mysqli_query($db, $query);
-        }
+            try {
+                // 2. Eliminar el auto de la base de datos
+                $queryDelete = "DELETE FROM autos WHERE auto_id = {$auto_id}";
+                $resultadoDelete = mysqli_query($db, $queryDelete);
+                if(!$resultadoDelete) throw new Exception("Error eliminando el auto");
 
-        if($resultado){
-            header('Location: /miprimerauto/admin?resultado=3');
+                // 3. Registrar la eliminación en la bitácora
+                $queryLog = "INSERT INTO bitacoras (accion, auto_id, fecha) VALUES ('Eliminado', {$auto_id}, NOW())";
+                mysqli_query($db, $queryLog);
+
+                // 4. Guardar cambios en la BD (Commit)
+                mysqli_commit($db);
+
+                // 5. ¡AQUÍ borramos la imagen real! Solo si la BD hizo Commit con éxito
+                unlink('../../imagenes/' . $auto['imagen']);
+                header('Location: /miprimerauto/admin?registrado=3');
+            } catch (Exception $e) {
+                // Si algo falla, revertimos y evitamos perder el auto (Rollback)
+                mysqli_rollback($db);
+            }
         }
         
     }
@@ -109,6 +123,7 @@
 
         <a href="/miprimerauto/admin/autos/crear.php" class="boton boton-verde">Nuevo Auto</a>
         <a href="/miprimerauto/admin/index.php?accion=backup" class="boton boton-amarillo">Descargar Respaldo (SQL)</a>
+        <a href="/miprimerauto/admin/bitacoras.php" class="boton boton-amarillo">Ver Bitácoras</a>
 
 
         <table class="propiedades">

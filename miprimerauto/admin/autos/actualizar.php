@@ -168,20 +168,28 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         litros = {$litros}, vendedores_vendedor_id = {$vendedores_vendedor_id} 
         WHERE auto_id = {$auto_id}";
 
-        //$query = "INSERT INTO autos (auto, precio, imagen, descripcion, puertas, cilindros, litros,
-        //ingresado, vendedores_vendedor_id) 
-        //VALUES ('$auto', '$precio', '$nombreImagen', '$descripcion', '$puertas','$cilindros', '$litros', '$ingresado',
-        //'$vendedores_vendedor_id')";
+        // 1. Iniciar la transacción
+        mysqli_begin_transaction($db);
 
-        //echo $query;
+        try {
+            // 2. Actualizar el vehículo
+            $resultado = mysqli_query($db, $query);
+            
+            if(!$resultado) {
+                throw new Exception("Error al actualizar el vehículo en la base de datos.");
+            }
 
+            // 3. Registrar en la bitácora
+            $queryLog = "INSERT INTO bitacoras (accion, auto_id, fecha) VALUES ('Actualizado', {$auto_id}, NOW())";
+            mysqli_query($db, $queryLog);
 
-        $resultado = mysqli_query($db, $query);
-
-        if($resultado){
-            //Redireccionar al usuario
-
+            // 4. Guardar cambios (Commit)
+            mysqli_commit($db);
             header('Location: /miprimerauto/admin?registrado=2');
+        } catch (Exception $e) {
+            // Si falla, deshacer todo (Rollback)
+            mysqli_rollback($db);
+            $errores[] = "Hubo un error en la transacción: " . $e->getMessage();
         }
     }
 
