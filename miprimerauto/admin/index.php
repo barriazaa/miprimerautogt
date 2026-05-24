@@ -10,6 +10,52 @@
     require '../includes/config/database.php';
     $db = conectarDB();
 
+    // Generar Respaldo (Backup)
+    if (isset($_GET['accion']) && $_GET['accion'] === 'backup') {
+        $tables = array();
+        $result = mysqli_query($db, "SHOW TABLES");
+        while($row = mysqli_fetch_row($result)){
+            $tables[] = $row[0];
+        }
+
+        $sqlScript = "-- Respaldo de la Base de Datos MiPrimerAuto\n";
+        $sqlScript .= "-- Fecha: " . date('Y-m-d H:i:s') . "\n\n";
+        $sqlScript .= "SET FOREIGN_KEY_CHECKS=0;\n\n"; // Evita errores de llaves foraneas al restaurar
+
+        foreach($tables as $table){
+            $result = mysqli_query($db, "SELECT * FROM `$table`");
+            $numField = mysqli_num_fields($result);
+
+            $sqlScript .= "DROP TABLE IF EXISTS `$table`;\n";
+            $row2 = mysqli_fetch_row(mysqli_query($db, "SHOW CREATE TABLE `$table`"));
+            $sqlScript .= "\n".$row2[1].";\n\n";
+
+            while($row = mysqli_fetch_row($result)){
+                $sqlScript .= "INSERT INTO `$table` VALUES(";
+                for($j = 0; $j < $numField; $j++){
+                    if (isset($row[$j])) {
+                        $escaped = mysqli_real_escape_string($db, $row[$j]);
+                        $sqlScript .= '"' . $escaped . '"';
+                    } else {
+                        $sqlScript .= 'NULL';
+                    }
+                    if ($j < ($numField-1)) {
+                        $sqlScript .= ',';
+                    }
+                }
+                $sqlScript .= ");\n";
+            }
+            $sqlScript .= "\n";
+        }
+        
+        $sqlScript .= "SET FOREIGN_KEY_CHECKS=1;\n";
+
+        $backup_file_name = 'respaldo_miprimerauto_' . date('Y-m-d_H-i-s') . '.sql';
+        header('Content-Type: application/x-sql');
+        header('Content-Disposition: attachment; filename=' . $backup_file_name);
+        echo $sqlScript;
+        exit;
+    }
     
     //Escribir el Query
     $query = "SELECT a.*, m.nombre as modelo, ma.nombre as marca FROM autos a LEFT JOIN modelos m ON a.modelo_id = m.id LEFT JOIN marcas ma ON m.marca_id = ma.id";
@@ -62,6 +108,7 @@
         <?php endif; ?>
 
         <a href="/miprimerauto/admin/autos/crear.php" class="boton boton-verde">Nuevo Auto</a>
+        <a href="/miprimerauto/admin/index.php?accion=backup" class="boton boton-amarillo">Descargar Respaldo (SQL)</a>
 
 
         <table class="propiedades">
